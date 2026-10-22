@@ -19,7 +19,7 @@ env:
 jobs:
   files_changed:
     name: Detect file changes
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, manupa-hnx]
     permissions:
       contents: read
     outputs:
@@ -37,6 +37,8 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - name: detect file changes
         id: files_changed
         run: |
@@ -84,13 +86,15 @@ jobs:
     name: Test mdBook Documentation builds
     needs: files_changed
     if: needs.files_changed.outputs.docs_changed == 'true'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, manupa-hnx]
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - uses: Swatinem/rust-cache@v2
@@ -105,11 +109,13 @@ jobs:
     needs: mdbook_test
     permissions:
       contents: write
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, manupa-hnx]
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - uses: Swatinem/rust-cache@v2
@@ -129,13 +135,15 @@ jobs:
   check_and_test:
     needs: files_changed
     if: needs.files_changed.outputs.code_changed == 'true'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, manupa-hnx]
     permissions:
       contents: read
     steps:
     - uses: actions/checkout@v4
       with:
         persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
     - name: Install pinned Rust toolchain
       run: rustup toolchain install
     - uses: Swatinem/rust-cache@v2
@@ -169,6 +177,8 @@ jobs:
     - uses: actions/checkout@v4
       with:
         persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
     - name: Install pinned Rust toolchain
       run: rustup toolchain install
     - uses: Swatinem/rust-cache@v2
@@ -186,13 +196,15 @@ jobs:
   test_daemon_frontend:
     needs: files_changed
     if: needs.files_changed.outputs.web_changed == 'true'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, manupa-hnx]
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - run: npm ci
       - run: npm run lint -w daemon/web
       - run: npm run check -w daemon/web
@@ -201,13 +213,15 @@ jobs:
   test_installer_frontend:
     needs: files_changed
     if: needs.files_changed.outputs.installer_gui_changed == 'true'
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, manupa-hnx]
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - run: npm ci
       - run: npm run lint -w installer-gui
       - run: npm run check -w installer-gui
@@ -222,6 +236,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - uses: Swatinem/rust-cache@v2
@@ -248,10 +264,10 @@ jobs:
       matrix:
         platform:
           - name: linux-x64
-            os: ubuntu-latest
+            os: [self-hosted, manupa-hnx]
             target: x86_64-unknown-linux-musl
           - name: linux-armv7
-            os: ubuntu-latest
+            os: [self-hosted, manupa-hnx]
             target: armv7-unknown-linux-musleabi
           - name: linux-aarch64
             os: ubuntu-24.04-arm
@@ -270,6 +286,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - name: Add Rust target
@@ -291,13 +309,15 @@ jobs:
     needs:
       - check_and_test
       - files_changed
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, manupa-hnx]
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - name: Add Rust target
@@ -315,13 +335,15 @@ jobs:
     if: needs.files_changed.outputs.installer_build == 'true'
     needs:
       - files_changed
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, manupa-hnx]
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - name: Install cross-compiler
         run: sudo apt-get update && sudo apt-get install -y gcc-arm-linux-gnueabihf
       - name: Build wpa_supplicant (armv7)
@@ -343,11 +365,13 @@ jobs:
     permissions:
       contents: read
       packages: write
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, manupa-hnx]
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - name: Build frontend
         run: |
           npm ci
@@ -399,10 +423,10 @@ jobs:
       matrix:
         platform:
           - name: linux-x64
-            os: ubuntu-latest
+            os: [self-hosted, manupa-hnx]
             target: x86_64-unknown-linux-musl
           - name: linux-armv7
-            os: ubuntu-latest
+            os: [self-hosted, manupa-hnx]
             target: armv7-unknown-linux-musleabi
           - name: linux-aarch64
             os: ubuntu-24.04-arm
@@ -421,6 +445,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - uses: actions/download-artifact@v4
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
@@ -455,7 +481,7 @@ jobs:
           # we want to use the oldest supported version of ubuntu here to
           # maximize compatibility with older versions of glibc
           - name: linux-x64
-            os: ubuntu-22.04
+            os: [self-hosted, manupa-hnx]
             target: x86_64-unknown-linux-gnu
           - name: linux-aarch64
             os: ubuntu-22.04-arm
@@ -465,6 +491,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - uses: actions/download-artifact@v4
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
@@ -511,6 +539,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - uses: actions/download-artifact@v4
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
@@ -555,6 +585,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - uses: actions/download-artifact@v4
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
@@ -586,7 +618,7 @@ jobs:
       - build_rootshell
       - build_rayhunter
       - build_rust_installer
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, manupa-hnx]
     strategy:
       matrix:
         platform:
@@ -600,6 +632,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - uses: actions/download-artifact@v4
       - name: Fix executable permissions on binaries
         run: chmod +x installer-*/installer rayhunter-check-*/rayhunter-check rayhunter-daemon/rayhunter-daemon
@@ -636,11 +670,13 @@ jobs:
       - files_changed
     permissions:
       contents: write
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, manupa-hnx]
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - name: Add Rust target
@@ -667,7 +703,7 @@ jobs:
     needs:
       - mdbook_build
       - openapi_build
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, manupa-hnx]
     steps:
       - name: Setup Pages
         uses: actions/configure-pages@v4
@@ -693,8 +729,10 @@ jobs:
     concurrency:
       group: github-pages
       cancel-in-progress: false
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, manupa-hnx]
     steps:
       - name: Deploy Github Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'

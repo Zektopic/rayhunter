@@ -10,13 +10,15 @@ env:
 
 jobs:
   check_version_same:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, manupa-hnx]
     permissions:
       contents: read
     steps:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - name: Ensure all Cargo.toml files have the same version defined.
         run: |
           defined_versions=$(find lib check daemon installer installer-gui rootshell telcom-parser -name Cargo.toml -exec grep ^version {} \; | sort -u | wc -l)
@@ -38,7 +40,7 @@ jobs:
     uses: ./.github/workflows/main.yml
 
   release:
-    runs-on: ubuntu-latest
+    runs-on: [self-hosted, manupa-hnx]
     needs: main
     permissions:
       contents: write
@@ -46,6 +48,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
+      - name: Configure Git safe directory
+        run: git config --global --add safe.directory '*'
       - uses: actions/download-artifact@v4
       - name: Create release
         run: |
