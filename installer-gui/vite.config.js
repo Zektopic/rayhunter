@@ -1,12 +1,23 @@
 import { defineConfig } from 'vite';
 import { sveltekit } from '@sveltejs/kit/vite';
+import adapter from '@sveltejs/adapter-static';
+import { vitePreprocess } from '@sveltejs/vite-plugin-svelte';
 import tailwindcss from '@tailwindcss/vite';
 
 const host = process.env.TAURI_DEV_HOST;
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-    plugins: [sveltekit(), tailwindcss()],
+    plugins: [
+        sveltekit({
+            preprocess: vitePreprocess(),
+            adapter: adapter(),
+            alias: {
+                $lib: 'src/lib',
+            },
+        }),
+        tailwindcss(),
+    ],
 
     // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
     //

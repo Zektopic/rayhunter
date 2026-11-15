@@ -4,5 +4,8 @@
     "workspaces": [
         "daemon/web",
         "installer-gui"
-    ]
+    ],
+    "overrides": {
+        "minimatch": "^11.0.8"
+    }
 }
