@@ -34,7 +34,7 @@ jobs:
       installer_gui_changed: ${{ steps.files_changed.outputs.installer_gui_count != '0' }}
       rootshell_needed: ${{ steps.files_changed.outputs.rootshell_count != '0' || steps.files_changed.outputs.installer_build != '0' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -91,7 +91,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Install pinned Rust toolchain
@@ -110,7 +110,7 @@ jobs:
       contents: write
     runs-on: [self-hosted, manupa-hnx]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Install pinned Rust toolchain
@@ -124,7 +124,7 @@ jobs:
         run: mdbook build
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: book
           path: book
@@ -136,7 +136,7 @@ jobs:
     permissions:
       contents: read
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         persist-credentials: false
     - name: Install pinned Rust toolchain
@@ -169,7 +169,7 @@ jobs:
     permissions:
       contents: read
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
       with:
         persist-credentials: false
     - name: Install pinned Rust toolchain
@@ -193,7 +193,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - run: npm ci
@@ -208,7 +208,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - run: npm ci
@@ -222,7 +222,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Install pinned Rust toolchain
@@ -270,7 +270,7 @@ jobs:
             target: x86_64-pc-windows-gnu
     runs-on: ${{ matrix.platform.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Install pinned Rust toolchain
@@ -283,7 +283,7 @@ jobs:
           cache-bin: 'false'
       - name: Build rayhunter-check
         run: cargo build --bin rayhunter-check --release --target ${{ matrix.platform.target }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: rayhunter-check-${{ matrix.platform.name }}
           path: target/${{ matrix.platform.target }}/release/rayhunter-check${{ matrix.platform.os == 'windows-latest' && '.exe' || '' }}
@@ -298,7 +298,7 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Install pinned Rust toolchain
@@ -308,7 +308,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
       - name: Build rootshell (armv7)
         run: cargo build -p rootshell --bin rootshell --target armv7-unknown-linux-musleabihf --profile=firmware
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: rootshell
           path: target/armv7-unknown-linux-musleabihf/firmware/rootshell
@@ -322,14 +322,14 @@ jobs:
     permissions:
       contents: read
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Install cross-compiler
         run: sudo apt-get update && sudo apt-get install -y gcc-arm-linux-gnueabihf
       - name: Build wpa_supplicant (armv7)
         run: CC=arm-linux-gnueabihf-gcc STRIP=arm-linux-gnueabihf-strip HOST=arm-linux-gnueabihf scripts/build-wpa-supplicant.sh
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: wpa-supplicant
           path: |
@@ -348,7 +348,7 @@ jobs:
       packages: write
     runs-on: [self-hosted, manupa-hnx]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Build frontend
@@ -356,7 +356,7 @@ jobs:
           npm ci
           npm run build -w daemon/web
       - name: Cache musl-cross toolchain
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ~/.cargo-musl-cross
@@ -381,7 +381,7 @@ jobs:
             -w /work \
             messense/rust-musl-cross:armv7-musleabihf \
             sh -c 'rustup target add armv7-unknown-linux-musleabihf && cargo build-daemon-firmware'
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: rayhunter-daemon
           path: target/armv7-unknown-linux-musleabihf/firmware/rayhunter-daemon
@@ -421,10 +421,10 @@ jobs:
             target: x86_64-pc-windows-gnu
     runs-on: ${{ matrix.platform.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - name: Add Rust target
@@ -434,7 +434,7 @@ jobs:
           # Workaround for https://github.com/Swatinem/rust-cache/issues/341
           cache-bin: 'false'
       - run: cargo build --package installer --bin installer --release --target ${{ matrix.platform.target }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: installer-${{ matrix.platform.name }}
           path: target/${{ matrix.platform.target }}/release/installer${{ matrix.platform.os == 'windows-latest' && '.exe' || '' }}
@@ -465,10 +465,10 @@ jobs:
             target: aarch64-unknown-linux-gnu
     runs-on: ${{ matrix.platform.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - name: Add Rust target
@@ -481,17 +481,17 @@ jobs:
         run: |
           npm ci
           npm run tauri build -w installer-gui -- --target ${{ matrix.platform.target }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: gui-installer-${{ matrix.platform.name }}-appimage
           path: target/${{ matrix.platform.target }}/release/bundle/appimage/*.AppImage
           if-no-files-found: error
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: gui-installer-${{ matrix.platform.name }}-deb
           path: target/${{ matrix.platform.target }}/release/bundle/deb/*.deb
           if-no-files-found: error
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: gui-installer-${{ matrix.platform.name }}-rpm
           path: target/${{ matrix.platform.target }}/release/bundle/rpm/*.rpm
@@ -511,10 +511,10 @@ jobs:
       - test_installer_frontend
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - name: Add Rust targets
@@ -533,7 +533,7 @@ jobs:
           npm run tauri build -w installer-gui -- --target "$TARGET"
           mv "target/$TARGET/release/bundle/macos/"*.app .
           zip -r "rayhunter-installer-macos.app.zip" ./*.app
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: gui-installer-macos-app
           path: ./*.app.zip
@@ -555,10 +555,10 @@ jobs:
       TARGET: x86_64-pc-windows-msvc
     runs-on: windows-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
       - name: Install pinned Rust toolchain
         run: rustup toolchain install
       - name: Add Rust target
@@ -569,12 +569,12 @@ jobs:
         run: |
           npm ci
           npm run tauri build -w installer-gui -- --target ${{ env.TARGET }}
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: gui-installer-msi
           path: target/${{ env.TARGET }}/release/bundle/msi/*.msi
           if-no-files-found: error
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: gui-installer-exe
           path: target/${{ env.TARGET }}/release/bundle/nsis/*.exe
@@ -600,10 +600,10 @@ jobs:
           - macos-arm
           - windows-x86_64
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v8
       - name: Fix executable permissions on binaries
         run: chmod +x installer-*/installer rayhunter-check-*/rayhunter-check rayhunter-daemon/rayhunter-daemon
       - name: Get Rayhunter version
@@ -625,7 +625,7 @@ jobs:
           sha256sum "$dest.zip" > "$dest.zip.sha256"
 
       - name: Upload zip release and sha256
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: rayhunter-v${{ env.VERSION }}-${{ matrix.platform }}
           path: |
@@ -641,7 +641,7 @@ jobs:
       contents: write
     runs-on: [self-hosted, manupa-hnx]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           persist-credentials: false
       - name: Install pinned Rust toolchain
@@ -659,7 +659,7 @@ jobs:
           mkdir api-docs
           mv doc/swagger-ui.html api-docs/index.html
           mv rayhunter-openapi.json api-docs/
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: api-docs
           path: api-docs
@@ -673,12 +673,12 @@ jobs:
     runs-on: [self-hosted, manupa-hnx]
     steps:
       - name: Setup Pages
-        uses: actions/configure-pages@v4
-      - uses: actions/download-artifact@v4
+        uses: actions/configure-pages@v6
+      - uses: actions/download-artifact@v8
       - name: Organize pages into directory
         run: cp -a api-docs book/
       - name: Upload pages
-        uses: actions/upload-pages-artifact@v3
+        uses: actions/upload-pages-artifact@v5
         with:
           path: book
 
@@ -700,4 +700,4 @@ jobs:
     steps:
       - name: Deploy Github Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5
